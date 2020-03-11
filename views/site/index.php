@@ -10,27 +10,34 @@ $this->title = 'My Yii Application';
         <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Product 1</th>
-            <th scope="col">Product 2</th>
-            <th scope="col">All products</th>
+            <th scope="col">Without discount</th>
+            <th scope="col">With discount</th>
+            <th scope="col">Discounts</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <th scope="row">Without discount</th>
-            <td><?= $product1Price ?></td>
-            <td><?= $product2Price ?></td>
-            <td><?= $productsPrice ?></td>
-        </tr>
-        <tr>
-            <th scope="row">With discount</th>
-            <td><?= $product1DiscountedPrice ?></td>
-            <td><?= $product2DiscountedPrice ?></td>
-            <td><?= $productsDiscountedPrice ?></td>
-        </tr>
+        <?php
+        foreach ($products as $product) {
+            ?>
+            <tr>
+                <th scope="row">Product #<?= $product->getId() ?></th>
+                <td><?= $product->getPrice() ?></td>
+                <td><?= $discountManager->getDiscountedPrice($product) ?></td>
+                <td>
+                    <?php
+                    foreach ($discountManager->getAppliedDiscounts($product) as $discount) {
+                        echo $discount->getPercent() . '/ ';
+                    }
+                    ?>
+                </td>
+            </tr>
+            <?php
+        }
+        ?>
         </tbody>
-
-
     </table>
+
+    <h3>All price without discount: <?= $productsPrice ?></h3>
+    <h3>All price with discount: <?= $productsDiscountedPrice ?></h3>
 
 </div>

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Basket;
 use app\modules\discounts\services\BlackFridayDiscount;
 use app\modules\discounts\services\ComplectDiscount;
 use app\modules\discounts\services\DbDiscountSpecification;
@@ -78,22 +79,13 @@ class SiteController extends Controller
         $discountManager->applyDiscounts($cart, $promoCodeDiscount, $blackFridayDiscount, $earlyBirdDiscount,
             $complectDiscount);
 
-        $product1Price = $product1->getPrice();
-        $product2Price = $product2->getPrice();
-
-        $product1DiscountedPrice = $discountManager->getDiscountedPrice($product1);
-        $product2DiscountedPrice = $discountManager->getDiscountedPrice($product2);
-
-        $productsPrice = $product1Price + $product2Price;
-        $productsDiscountedPrice = $product1DiscountedPrice + $product2DiscountedPrice;
+        $basket = new Basket($cart, $discountManager);
 
         return $this->render('index', [
-            'product1Price' => $product1Price,
-            'product2Price' => $product2Price,
-            'product1DiscountedPrice' => $product1DiscountedPrice,
-            'product2DiscountedPrice' => $product2DiscountedPrice,
-            'productsPrice' => $productsPrice,
-            'productsDiscountedPrice' => $productsDiscountedPrice,
+            'products' => $cart->getProducts(),
+            'discountManager' => $discountManager,
+            'productsPrice' => $basket->getPriceWithoutDiscount(),
+            'productsDiscountedPrice' => $basket->getPriceWithDiscount(),
         ]);
     }
 }
